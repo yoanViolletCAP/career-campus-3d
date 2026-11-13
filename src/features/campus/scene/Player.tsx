@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import {
   CAMPUS_LIMIT,
+  getCampusTerrainHeight,
   getBuildingRotation,
   getEntrancePosition,
   INTERACTION_DISTANCE,
@@ -116,7 +117,8 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
     const isMoving = horizontal !== 0 || vertical !== 0
     const walkCycle = state.clock.elapsedTime * 9
     const stride = isMoving ? Math.sin(walkCycle) * 0.46 : 0
-    if (group.current) group.current.position.set(position.x, 0, position.z)
+    position.y = getCampusTerrainHeight(position.x, position.z, buildings) + 0.12
+    if (group.current) group.current.position.copy(position)
     if (body.current) body.current.position.y = isMoving ? Math.abs(Math.sin(walkCycle)) * 0.045 : 0
     if (leftArm.current) leftArm.current.rotation.x = stride
     if (rightArm.current) rightArm.current.rotation.x = -stride
@@ -163,27 +165,27 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
       <group ref={body}>
         <mesh position={[0, 1.08, 0]} castShadow>
           <capsuleGeometry args={[0.37, 0.52, 5, 10]} />
-          <meshStandardMaterial color="#1c4058" roughness={0.56} />
+          <meshStandardMaterial color="#485e52" roughness={0.62} />
         </mesh>
         <mesh position={[0, 0.72, 0]} castShadow>
           <boxGeometry args={[0.58, 0.22, 0.4]} />
-          <meshStandardMaterial color="#233a4b" roughness={0.78} />
+          <meshStandardMaterial color="#625645" roughness={0.82} />
         </mesh>
         <mesh position={[0, 1.12, -0.39]} castShadow>
           <boxGeometry args={[0.68, 0.76, 0.34]} />
-          <meshStandardMaterial color="#405b64" roughness={0.82} />
+          <meshStandardMaterial color="#52675b" roughness={0.84} />
         </mesh>
         <mesh position={[0, 1.46, -0.39]} castShadow>
           <boxGeometry args={[0.52, 0.16, 0.36]} />
-          <meshStandardMaterial color="#58736f" roughness={0.78} />
+          <meshStandardMaterial color="#74846b" roughness={0.8} />
         </mesh>
         <mesh position={[0, 0.94, -0.575]}>
           <boxGeometry args={[0.48, 0.28, 0.035]} />
-          <meshStandardMaterial color="#344d58" roughness={0.82} />
+          <meshStandardMaterial color="#6a5a46" roughness={0.84} />
         </mesh>
         <mesh position={[0, 1.1, -0.6]}>
           <boxGeometry args={[0.25, 0.035, 0.025]} />
-          <meshStandardMaterial color="#c0a184" metalness={0.34} roughness={0.48} />
+          <meshStandardMaterial color="#d3b681" metalness={0.28} roughness={0.5} />
         </mesh>
         {[-1, 1].map((side) => (
           <mesh
@@ -205,11 +207,11 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
         </mesh>
         <mesh position={[-0.22, 1.22, 0.305]} rotation={[0, 0, -0.22]}>
           <boxGeometry args={[0.21, 0.43, 0.055]} />
-          <meshStandardMaterial color="#31536a" roughness={0.58} />
+          <meshStandardMaterial color="#65756a" roughness={0.62} />
         </mesh>
         <mesh position={[0.22, 1.22, 0.305]} rotation={[0, 0, 0.22]}>
           <boxGeometry args={[0.21, 0.43, 0.055]} />
-          <meshStandardMaterial color="#31536a" roughness={0.58} />
+          <meshStandardMaterial color="#65756a" roughness={0.62} />
         </mesh>
         <mesh position={[0, 1.49, 0]} castShadow>
           <cylinderGeometry args={[0.11, 0.13, 0.2, 8]} />
@@ -262,7 +264,7 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
       <group ref={leftArm} position={[-0.4, 1.34, 0]}>
         <mesh position={[0, -0.28, 0]} castShadow>
           <capsuleGeometry args={[0.13, 0.38, 4, 8]} />
-          <meshStandardMaterial color="#1c4058" roughness={0.58} />
+          <meshStandardMaterial color="#485e52" roughness={0.62} />
         </mesh>
         <mesh position={[0, -0.59, 0.015]} castShadow>
           <sphereGeometry args={[0.115, 10, 8]} />
@@ -276,7 +278,7 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
       <group ref={rightArm} position={[0.4, 1.34, 0]}>
         <mesh position={[0, -0.28, 0]} castShadow>
           <capsuleGeometry args={[0.13, 0.38, 4, 8]} />
-          <meshStandardMaterial color="#1c4058" roughness={0.58} />
+          <meshStandardMaterial color="#485e52" roughness={0.62} />
         </mesh>
         <mesh position={[0, -0.59, 0.015]} castShadow>
           <sphereGeometry args={[0.115, 10, 8]} />
@@ -290,11 +292,11 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
       <group ref={leftLeg} position={[-0.18, 0.66, 0]}>
         <mesh position={[0, -0.28, 0]} castShadow>
           <capsuleGeometry args={[0.14, 0.4, 4, 8]} />
-          <meshStandardMaterial color="#354a5a" roughness={0.76} />
+          <meshStandardMaterial color="#5c5144" roughness={0.8} />
         </mesh>
         <mesh position={[0, -0.57, 0.09]} castShadow>
           <boxGeometry args={[0.3, 0.18, 0.48]} />
-          <meshStandardMaterial color="#172b3b" roughness={0.83} />
+          <meshStandardMaterial color="#393a35" roughness={0.86} />
         </mesh>
         <mesh position={[0, -0.66, 0.1]}>
           <boxGeometry args={[0.31, 0.045, 0.48]} />
@@ -304,11 +306,11 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
       <group ref={rightLeg} position={[0.18, 0.66, 0]}>
         <mesh position={[0, -0.28, 0]} castShadow>
           <capsuleGeometry args={[0.14, 0.4, 4, 8]} />
-          <meshStandardMaterial color="#354a5a" roughness={0.76} />
+          <meshStandardMaterial color="#5c5144" roughness={0.8} />
         </mesh>
         <mesh position={[0, -0.57, 0.09]} castShadow>
           <boxGeometry args={[0.3, 0.18, 0.48]} />
-          <meshStandardMaterial color="#172b3b" roughness={0.83} />
+          <meshStandardMaterial color="#393a35" roughness={0.86} />
         </mesh>
         <mesh position={[0, -0.66, 0.1]}>
           <boxGeometry args={[0.31, 0.045, 0.48]} />

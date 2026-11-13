@@ -41,11 +41,11 @@ function Building({ building }: { building: CampusBuilding }) {
     <group position={building.position} rotation={[0, rotation, 0]}>
       <mesh position={[0, 0.14, 0]} receiveShadow>
         <boxGeometry args={[width + 1.15, 0.28, depth + 1.15]} />
-        <meshStandardMaterial color="#aebdb8" roughness={0.88} />
+        <meshStandardMaterial color="#b4b09d" roughness={0.88} />
       </mesh>
       <mesh position={[0, 0.32, 0]} castShadow receiveShadow>
         <boxGeometry args={[width + 0.72, 0.12, depth + 0.72]} />
-        <meshStandardMaterial color="#e2e4dc" roughness={0.82} />
+        <meshStandardMaterial color="#e9e1d0" roughness={0.82} />
       </mesh>
       <mesh position={[0, height / 2 + 0.38, 0]} castShadow receiveShadow>
         <boxGeometry args={[width, height, depth]} />
@@ -70,7 +70,7 @@ function Building({ building }: { building: CampusBuilding }) {
               <mesh position={[x, rowY + 0.38, depth / 2 + 0.07]} castShadow>
                 <boxGeometry args={[width * 0.2, windowHeight, 0.1]} />
                 <meshStandardMaterial
-                  color="#8fb9c1"
+                  color="#a1bcb0"
                   emissive={building.accent}
                   emissiveIntensity={0.045}
                   metalness={0.2}
@@ -79,11 +79,11 @@ function Building({ building }: { building: CampusBuilding }) {
               </mesh>
               <mesh position={[x, rowY + 0.38, depth / 2 + 0.13]}>
                 <boxGeometry args={[0.055, windowHeight, 0.035]} />
-                <meshStandardMaterial color="#dce4df" metalness={0.16} roughness={0.52} />
+                <meshStandardMaterial color="#e8e1cf" metalness={0.12} roughness={0.56} />
               </mesh>
               <mesh position={[x, rowY + 0.38, depth / 2 + 0.14]}>
                 <boxGeometry args={[width * 0.2, 0.055, 0.035]} />
-                <meshStandardMaterial color="#dce4df" metalness={0.16} roughness={0.52} />
+                <meshStandardMaterial color="#e8e1cf" metalness={0.12} roughness={0.56} />
               </mesh>
             </group>
           )
@@ -99,7 +99,7 @@ function Building({ building }: { building: CampusBuilding }) {
             >
               <boxGeometry args={[0.07, 1.22, depth * 0.19]} />
               <meshStandardMaterial
-                color="#91b9c1"
+                color="#a2b9ae"
                 emissive={building.accent}
                 emissiveIntensity={0.035}
                 metalness={0.18}
@@ -109,19 +109,19 @@ function Building({ building }: { building: CampusBuilding }) {
           ))}
           <mesh position={[side * (width / 2 + 0.09), height * 0.49, 0]} castShadow>
             <boxGeometry args={[0.16, height * 0.94, 0.18]} />
-            <meshStandardMaterial color="#c8d1cb" roughness={0.76} />
+            <meshStandardMaterial color="#cbc6b4" roughness={0.76} />
           </mesh>
         </group>
       ))}
 
       <mesh position={[0, doorHeight / 2 + 0.38, depth / 2 + 0.09]} castShadow>
         <boxGeometry args={[1.65, doorHeight, 0.2]} />
-        <meshStandardMaterial color="#19364a" roughness={0.42} />
+        <meshStandardMaterial color="#31484a" roughness={0.46} />
       </mesh>
       <mesh position={[0, doorHeight / 2 + 0.38, depth / 2 + 0.205]}>
         <boxGeometry args={[1.3, doorHeight - 0.22, 0.055]} />
         <meshStandardMaterial
-          color="#76aeb8"
+          color="#91b9ad"
           emissive={building.accent}
           emissiveIntensity={0.09}
           metalness={0.22}
@@ -135,7 +135,7 @@ function Building({ building }: { building: CampusBuilding }) {
 
       <mesh position={[0, doorHeight + 0.55, depth / 2 + 0.46]} castShadow>
         <boxGeometry args={[2.75, 0.18, 1.18]} />
-        <meshStandardMaterial color="#e0e5df" roughness={0.65} />
+        <meshStandardMaterial color="#e9e1ce" roughness={0.7} />
       </mesh>
       {[-1, 1].map((side) => (
         <mesh
@@ -200,11 +200,11 @@ function Building({ building }: { building: CampusBuilding }) {
 
       <mesh position={[0, height + 0.48, 0]} castShadow>
         <boxGeometry args={[width + 0.62, 0.38, depth + 0.62]} />
-        <meshStandardMaterial color="#263f4c" roughness={0.62} />
+        <meshStandardMaterial color="#455249" roughness={0.65} />
       </mesh>
       <mesh position={[0, height + 0.7, 0]}>
         <boxGeometry args={[width + 0.28, 0.08, depth + 0.28]} />
-        <meshStandardMaterial color="#c4ceca" metalness={0.1} roughness={0.7} />
+        <meshStandardMaterial color="#c5bea9" metalness={0.08} roughness={0.72} />
       </mesh>
       <mesh position={[0, height + 0.77, 0]} castShadow>
         <boxGeometry args={[width * 0.73, 0.12, depth * 0.72]} />
@@ -227,12 +227,35 @@ function Building({ building }: { building: CampusBuilding }) {
         </mesh>
       ))}
 
-      <Html position={[0, height + 1.6, 0]} center distanceFactor={23} style={{ pointerEvents: 'none' }}>
-        <div className="building-label">
-          <span>{building.shortName}</span>
-          <strong>{building.name}</strong>
-        </div>
-      </Html>
+      {building.id === 'veolia' ? (
+        <>
+          <mesh position={[0, height + 1.32, 0]} castShadow>
+            <boxGeometry args={[6.3, 1.5, 0.2]} />
+            <meshStandardMaterial color="#f0eadc" roughness={0.62} />
+          </mesh>
+          <mesh position={[0, height + 1.32, 0.115]}>
+            <boxGeometry args={[6.1, 1.28, 0.035]} />
+            <meshStandardMaterial color="#f7f3e9" roughness={0.72} />
+          </mesh>
+          <Html position={[0, height + 1.32, 0.15]} center distanceFactor={24} style={{ pointerEvents: 'none' }}>
+            <div className="veolia-roof-sign" aria-label="Veolia, signalétique temporaire">
+              <svg viewBox="0 0 32 40" aria-hidden="true">
+                <path d="M16 2C12 10 5 17 5 24a11 11 0 0 0 22 0C27 17 20 10 16 2Z" />
+                <path d="M10 25c1 4 3 6 7 7" className="veolia-mark__shine" />
+              </svg>
+              <strong>VEOLIA</strong>
+              <span>RESSOURCES · DEMAIN</span>
+            </div>
+          </Html>
+        </>
+      ) : (
+        <Html position={[0, height + 1.6, 0]} center distanceFactor={23} style={{ pointerEvents: 'none' }}>
+          <div className="building-label">
+            <span>{building.shortName}</span>
+            <strong>{building.name}</strong>
+          </div>
+        </Html>
+      )}
     </group>
   )
 }

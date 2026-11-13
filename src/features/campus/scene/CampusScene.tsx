@@ -76,23 +76,23 @@ export default function CampusScene({
 }: CampusSceneProps) {
   return (
     <>
-      <color attach="background" args={['#b9d1d8']} />
-      <fog attach="fog" args={['#b9d1d8', 78, 148]} />
-      <ambientLight intensity={1.2} color="#e6f1f1" />
+      <color attach="background" args={['#cbd6c8']} />
+      <fog attach="fog" args={['#cbd6c8', 78, 148]} />
+      <ambientLight intensity={1.15} color="#f4ead7" />
       <directionalLight
         position={[-24, 34, 20]}
-        intensity={2}
-        color="#fff5e7"
+        intensity={1.8}
+        color="#ffe7c2"
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={1536}
+        shadow-mapSize-height={1536}
         shadow-camera-left={-64}
         shadow-camera-right={64}
         shadow-camera-top={64}
         shadow-camera-bottom={-64}
         shadow-bias={-0.00015}
       />
-      <hemisphereLight args={['#d7efff', '#526d5b', 0.65]} />
+      <hemisphereLight args={['#e3e7d4', '#655c43', 0.72]} />
       <Environment buildings={buildings} />
       <Buildings buildings={buildings} />
       <NavigationBoard buildings={buildings} onNavigate={onNavigate} />
