@@ -60,6 +60,6 @@ L'écran de chargement suit les étapes réelles de démarrage (interface, modul
 
 ## Échelle et scène du campus
 
-Le campus conserve ses six destinations en éventail autour de la place. Les bâtiments sont répartis jusqu'à environ 42 unités du centre, avec une limite de déplacement de 82 unités. Le terrain vallonné, les chemins courbes, les bosquets, les plantations et le brouillard sont dimensionnés pour ce monde élargi. Les proportions restent configurables dans `features/campus/data/campus.ts` et `features/campus/scene/` ; après tout changement d'échelle, vérifier ensemble les entrées, collisions, chemins et cadrage.
+Le campus conserve ses six destinations en éventail autour de la place. Les bâtiments sont répartis jusqu'à environ 42 unités du centre, avec une limite de déplacement de 82 unités. Le terrain vallonné comprend des chemins principaux courbes, des sentiers secondaires vers un belvédère et un étang, des bosquets et des plantations. Les proportions restent configurables dans `features/campus/data/campus.ts` et `features/campus/scene/` ; après tout changement d'échelle, vérifier ensemble les entrées, collisions, chemins et cadrage.
 
 La scène utilise des géométries Three.js légères, sans textures ou modèles distants. Les façades partagent des matériaux et une structure cohérente, avec trois variations architecturales, des vitrages, des auvents, des panneaux de toit et des plantations d'entrée. Le centre dispose d'une fontaine, de bancs, de massifs et d'un éclairage de chemin.

@@ -85,11 +85,30 @@ export const campusBuildings: CampusBuilding[] = [
   },
 ]
 
+export type CampusNatureTrail = {
+  id: string
+  from: CampusBuildingId
+  fromT: number
+  to: [number, number]
+  bend: number
+}
+
+export const campusLandmarks = {
+  overlook: [-14, 0, 64] as [number, number, number],
+  pond: [34, 0, 56] as [number, number, number],
+}
+
+export const campusNatureTrails: CampusNatureTrail[] = [
+  { id: 'overlook-trail', from: 'missions', fromT: 0.55, to: [-11.3, 58.6], bend: 8 },
+  { id: 'pond-trail', from: 'project-three', fromT: 0.5, to: [32.8, 50.5], bend: 8 },
+]
+
 export const CAMPUS_LIMIT = 82
 export const PLAYER_SPEED = 6
 export const INTERACTION_DISTANCE = 3.2
 
 const pathPointCache = new WeakMap<CampusBuilding, [number, number][]>()
+const natureTrailPointCache = new WeakMap<CampusNatureTrail, [number, number][]>()
 
 function smoothstep(edge0: number, edge1: number, value: number) {
   const t = Math.max(0, Math.min(1, (value - edge0) / (edge1 - edge0)))
@@ -111,27 +130,24 @@ function distanceToSegment(
   return Math.hypot(x - (start[0] + dx * amount), z - (start[1] + dz * amount))
 }
 
-export function getCampusPathPoints(building: CampusBuilding, segments = 32): [number, number][] {
-  if (segments === 32) {
-    const cached = pathPointCache.get(building)
-    if (cached) return cached
-  }
-
-  const entrance = getEntrancePosition(building)
-  const [endX, , endZ] = entrance
-  const radius = Math.hypot(endX, endZ)
-  const tangentX = -endZ / radius
-  const tangentZ = endX / radius
-  const buildingIndex = campusBuildings.findIndex(({ id }) => id === building.id)
-  const bendDirection = buildingIndex % 2 === 0 ? 1 : -1
-  const bend = bendDirection * (6 + (buildingIndex % 3) * 2)
+function createCurvedPathPoints(
+  start: [number, number],
+  end: [number, number],
+  bend: number,
+  segments: number,
+): [number, number][] {
+  const deltaX = end[0] - start[0]
+  const deltaZ = end[1] - start[1]
+  const length = Math.hypot(deltaX, deltaZ) || 1
+  const tangentX = -deltaZ / length
+  const tangentZ = deltaX / length
   const controlOne: [number, number] = [
-    (endX / radius) * radius * 0.34 + tangentX * bend,
-    (endZ / radius) * radius * 0.34 + tangentZ * bend,
+    start[0] + deltaX * 0.34 + tangentX * bend,
+    start[1] + deltaZ * 0.34 + tangentZ * bend,
   ]
   const controlTwo: [number, number] = [
-    endX * 0.72 + tangentX * bend * 0.58,
-    endZ * 0.72 + tangentZ * bend * 0.58,
+    start[0] + deltaX * 0.72 + tangentX * bend * 0.58,
+    start[1] + deltaZ * 0.72 + tangentZ * bend * 0.58,
   ]
   const points: [number, number][] = []
 
@@ -139,16 +155,54 @@ export function getCampusPathPoints(building: CampusBuilding, segments = 32): [n
     const t = index / segments
     const inverse = 1 - t
     points.push([
-      3 * inverse ** 2 * t * controlOne[0] +
+      inverse ** 3 * start[0] +
+        3 * inverse ** 2 * t * controlOne[0] +
         3 * inverse * t ** 2 * controlTwo[0] +
-        t ** 3 * endX,
-      3 * inverse ** 2 * t * controlOne[1] +
+        t ** 3 * end[0],
+      inverse ** 3 * start[1] +
+        3 * inverse ** 2 * t * controlOne[1] +
         3 * inverse * t ** 2 * controlTwo[1] +
-        t ** 3 * endZ,
+        t ** 3 * end[1],
     ])
   }
 
+  return points
+}
+
+export function getCampusPathPoints(building: CampusBuilding, segments = 32): [number, number][] {
+  if (segments === 32) {
+    const cached = pathPointCache.get(building)
+    if (cached) return cached
+  }
+
+  const buildingIndex = campusBuildings.findIndex(({ id }) => id === building.id)
+  const bendDirection = buildingIndex % 2 === 0 ? 1 : -1
+  const bend = bendDirection * (6 + (buildingIndex % 3) * 2)
+  const entrance = getEntrancePosition(building)
+  const points = createCurvedPathPoints([0, 0], [entrance[0], entrance[2]], bend, segments)
+
   if (segments === 32) pathPointCache.set(building, points)
+  return points
+}
+
+export function getCampusNatureTrailPoints(trail: CampusNatureTrail, segments = 24): [number, number][] {
+  if (segments === 24) {
+    const cached = natureTrailPointCache.get(trail)
+    if (cached) return cached
+  }
+
+  const building = campusBuildings.find(({ id }) => id === trail.from)
+  if (!building) throw new Error(`Unknown building "${trail.from}" for campus trail "${trail.id}"`)
+  const mainPath = getCampusPathPoints(building)
+  const start = mainPath[Math.round(trail.fromT * (mainPath.length - 1))]
+  const points = createCurvedPathPoints(
+    start,
+    trail.to,
+    trail.bend,
+    segments,
+  )
+
+  if (segments === 24) natureTrailPointCache.set(trail, points)
   return points
 }
 
@@ -171,6 +225,18 @@ export function getCampusTerrainHeight(x: number, z: number, buildings: CampusBu
       )
     }
     flattening = Math.min(flattening, smoothstep(2.7, 5.2, pathDistance))
+  }
+
+  for (const trail of campusNatureTrails) {
+    const pathPoints = getCampusNatureTrailPoints(trail)
+    let pathDistance = Number.POSITIVE_INFINITY
+    for (let index = 0; index < pathPoints.length - 1; index += 1) {
+      pathDistance = Math.min(
+        pathDistance,
+        distanceToSegment(x, z, pathPoints[index], pathPoints[index + 1]),
+      )
+    }
+    flattening = Math.min(flattening, smoothstep(2.2, 4.5, pathDistance))
   }
 
   const edgeFade = 1 - smoothstep(82, 94, radius)
