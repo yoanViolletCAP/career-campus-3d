@@ -151,3 +151,52 @@ La première version sera considérée comme fonctionnelle lorsque :
 - Les contenus pourront être remplacés directement dans le code.
 - Le site pourra être publié et consulté avec une URL publique.
 Les projets majeurs pourront encore contenir des données fictives ou des contenus provisoires lors de cette validation.
+
+## 13. Références visuelles et inspirations
+
+Ces références orientent la direction artistique et l'expérience utilisateur. Elles ne doivent pas être copiées : aucun modèle, ressource ou code ne sera repris.
+
+### Bruno Simon
+[https://bruno-simon.com/](https://bruno-simon.com/)
+
+- Inspiration principale pour l'univers 3D stylisé.
+- Caméra légèrement surélevée.
+- Sensation de liberté dans l'exploration.
+- Animations fluides et interactions naturelles.
+
+### SIT Virtual Campus
+[https://www.singaporetech.edu.sg/virtual-campus-tour/](https://www.singaporetech.edu.sg/virtual-campus-tour/)
+
+- Inspiration pour l'architecture du campus.
+- Bâtiments modernes et cohérents.
+- Espaces verts, chemins et organisation de l'environnement.
+- Ambiance professionnelle et réaliste, mais stylisée.
+
+### Landfall
+[https://landfall.framer.website/](https://landfall.framer.website/)
+
+- Inspiration pour l'organisation des destinations.
+- Chaque bâtiment représente une section du portfolio.
+- Navigation simple entre les bâtiments.
+
+### Henry Heffernan
+[https://henryheffernan.com/](https://henryheffernan.com/)
+
+- Inspiration pour les futurs écrans interactifs.
+- Présentation des informations professionnelles dans un environnement 3D.
+- Possibilité d'ouvrir des interfaces lisibles pour consulter les contenus.
+
+### Foliofarer
+[https://foliofarer.netlify.app/](https://foliofarer.netlify.app/)
+
+- Inspiration pour la navigation rapide.
+- Carte et accès direct aux destinations.
+- Alternative de navigation simplifiée.
+
+### Jesse's Ramen
+[https://www.jesse-zhou.com/](https://www.jesse-zhou.com/)
+
+- Inspiration pour les finitions graphiques.
+- Cohérence des matériaux.
+- Qualité des petits éléments décoratifs.
+- Travail de l'éclairage et de l'ambiance.

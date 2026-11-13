@@ -1,0 +1,27 @@
+import { Component } from 'react'
+import type { ErrorInfo, ReactNode } from 'react'
+
+type Props = {
+  children: ReactNode
+  fallback: ReactNode
+}
+
+type State = {
+  failed: boolean
+}
+
+export default class CampusErrorBoundary extends Component<Props, State> {
+  state: State = { failed: false }
+
+  static getDerivedStateFromError(): State {
+    return { failed: true }
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Le campus 3D n’a pas pu être affiché.', error, info)
+  }
+
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children
+  }
+}
