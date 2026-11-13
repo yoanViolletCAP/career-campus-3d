@@ -49,7 +49,7 @@ export default function CampusExperience({
         className="campus-canvas"
         shadows
         dpr={[1, 1.4]}
-        camera={{ position: [0, 12.12, 21.8], fov: 42, near: 0.1, far: 100 }}
+        camera={{ position: [0, 10.5, 19.3], fov: 42, near: 0.1, far: 220 }}
         gl={{ antialias: true, powerPreference: 'high-performance' }}
         fallback={fallback}
         onCreated={() => onLoadingStageChange('renderer')}

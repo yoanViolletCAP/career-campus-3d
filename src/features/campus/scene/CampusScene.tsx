@@ -77,7 +77,7 @@ export default function CampusScene({
   return (
     <>
       <color attach="background" args={['#cbd6c8']} />
-      <fog attach="fog" args={['#cbd6c8', 78, 148]} />
+      <fog attach="fog" args={['#cbd6c8', 112, 205]} />
       <ambientLight intensity={1.15} color="#f4ead7" />
       <directionalLight
         position={[-24, 34, 20]}
@@ -86,10 +86,10 @@ export default function CampusScene({
         castShadow
         shadow-mapSize-width={1536}
         shadow-mapSize-height={1536}
-        shadow-camera-left={-64}
-        shadow-camera-right={64}
-        shadow-camera-top={64}
-        shadow-camera-bottom={-64}
+        shadow-camera-left={-92}
+        shadow-camera-right={92}
+        shadow-camera-top={92}
+        shadow-camera-bottom={-92}
         shadow-bias={-0.00015}
       />
       <hemisphereLight args={['#e3e7d4', '#655c43', 0.72]} />

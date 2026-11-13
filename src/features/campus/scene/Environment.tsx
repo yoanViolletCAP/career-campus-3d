@@ -1,7 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import type { RefObject } from 'react'
 import * as THREE from 'three'
-import { getCampusTerrainHeight, getEntrancePosition, type CampusBuilding } from '../data/campus'
+import {
+  getCampusPathPoints,
+  getCampusTerrainHeight,
+  type CampusBuilding,
+} from '../data/campus'
 
 type InstanceTransform = {
   position: [number, number, number]
@@ -34,8 +38,8 @@ function usePopulateInstances(
 
 function CampusTerrain({ buildings }: { buildings: CampusBuilding[] }) {
   const geometry = useMemo(() => {
-    const segments = 96
-    const size = 128
+    const segments = 128
+    const size = 184
     const rowLength = segments + 1
     const vertexCount = rowLength * rowLength
     const positions = new Float32Array(vertexCount * 3)
@@ -50,7 +54,7 @@ function CampusTerrain({ buildings }: { buildings: CampusBuilding[] }) {
         const x = -size / 2 + (column / segments) * size
         const index = row * rowLength + column
         const height = getCampusTerrainHeight(x, z, buildings)
-        const color = grassLow.clone().lerp(grassHigh, THREE.MathUtils.clamp((height + 0.2) / 1.4, 0, 1))
+        const color = grassLow.clone().lerp(grassHigh, THREE.MathUtils.clamp((height + 0.4) / 3.8, 0, 1))
 
         positions[index * 3] = x
         positions[index * 3 + 1] = height
@@ -275,18 +279,18 @@ function Lamp({ position }: { position: [number, number, number] }) {
 
 function RockOutcrops({ buildings }: { buildings: CampusBuilding[] }) {
   const rocks = [
-    { x: 41.5, z: 3.5, scale: [1.8, 1.15, 1.3] },
-    { x: 44, z: 5.2, scale: [1.15, 0.82, 1] },
-    { x: 42.8, z: 1.7, scale: [0.9, 0.64, 1.1] },
-    { x: -40.5, z: -6, scale: [1.7, 1.08, 1.35] },
-    { x: -43, z: -4.4, scale: [1.1, 0.78, 0.95] },
-    { x: -42.1, z: -8.1, scale: [0.92, 0.65, 1] },
-    { x: 5, z: -45, scale: [1.7, 1.02, 1.25] },
-    { x: 7.6, z: -43.2, scale: [1.05, 0.7, 0.9] },
-    { x: 3, z: -43.1, scale: [0.9, 0.62, 1.1] },
-    { x: -7, z: 43.5, scale: [1.8, 1.12, 1.4] },
-    { x: -4.2, z: 45.3, scale: [1.05, 0.74, 1] },
-    { x: -9.5, z: 45.4, scale: [0.95, 0.66, 1.05] },
+    { x: 61, z: 10, scale: [2.4, 1.55, 1.8] },
+    { x: 64, z: 13.2, scale: [1.55, 1.1, 1.3] },
+    { x: 59.4, z: 7.6, scale: [1.2, 0.85, 1.45] },
+    { x: -60, z: -13, scale: [2.2, 1.4, 1.8] },
+    { x: -63, z: -9.4, scale: [1.4, 1, 1.25] },
+    { x: -58.2, z: -16, scale: [1.15, 0.8, 1.3] },
+    { x: 9, z: -67, scale: [2.2, 1.5, 1.7] },
+    { x: 12.6, z: -64, scale: [1.5, 1.05, 1.3] },
+    { x: 5.5, z: -69, scale: [1.2, 0.82, 1.35] },
+    { x: -12, z: 64, scale: [2.35, 1.55, 1.9] },
+    { x: -8, z: 67, scale: [1.45, 1.02, 1.3] },
+    { x: -16, z: 62, scale: [1.25, 0.86, 1.4] },
   ]
 
   return (
@@ -312,45 +316,77 @@ function RockOutcrops({ buildings }: { buildings: CampusBuilding[] }) {
   )
 }
 
-function PathToBuilding({ building }: { building: CampusBuilding }) {
-  const [x, , z] = getEntrancePosition(building)
-  const radius = Math.hypot(x, z)
-  const plazaRadius = 6.7
-  const length = Math.max(radius - plazaRadius, 0)
-  const rotation = Math.atan2(x, z)
-  const midpointRadius = plazaRadius + length / 2
-  const joints = Math.floor(length / 3.2)
+function createPathRibbon(
+  points: [number, number][],
+  width: number,
+  verticalOffset: number,
+  buildings: CampusBuilding[],
+) {
+  const positions = new Float32Array(points.length * 2 * 3)
+  const indices: number[] = []
 
-  if (length <= 0) return null
+  points.forEach(([x, z], index) => {
+    const previous = points[Math.max(0, index - 1)]
+    const next = points[Math.min(points.length - 1, index + 1)]
+    const directionX = next[0] - previous[0]
+    const directionZ = next[1] - previous[1]
+    const directionLength = Math.hypot(directionX, directionZ) || 1
+    const sideX = (directionZ / directionLength) * width / 2
+    const sideZ = (-directionX / directionLength) * width / 2
+    const height = getCampusTerrainHeight(x, z, buildings) + verticalOffset
+    const vertex = index * 6
+
+    positions[vertex] = x + sideX
+    positions[vertex + 1] = height
+    positions[vertex + 2] = z + sideZ
+    positions[vertex + 3] = x - sideX
+    positions[vertex + 4] = height
+    positions[vertex + 5] = z - sideZ
+
+    if (index < points.length - 1) {
+      const current = index * 2
+      const nextVertex = current + 2
+      indices.push(current, current + 1, nextVertex, current + 1, nextVertex + 1, nextVertex)
+    }
+  })
+
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+  geometry.setIndex(indices)
+  geometry.computeVertexNormals()
+  return geometry
+}
+
+function PathToBuilding({
+  building,
+  buildings,
+}: {
+  building: CampusBuilding
+  buildings: CampusBuilding[]
+}) {
+  const points = useMemo(() => getCampusPathPoints(building), [building])
+  const shoulder = useMemo(
+    () => createPathRibbon(points, 4.8, 0.035, buildings),
+    [points, buildings],
+  )
+  const surface = useMemo(
+    () => createPathRibbon(points, 3.8, 0.075, buildings),
+    [points, buildings],
+  )
+
+  useEffect(() => () => {
+    shoulder.dispose()
+    surface.dispose()
+  }, [shoulder, surface])
 
   return (
-    <group
-      position={[(x / radius) * midpointRadius, -0.04, (z / radius) * midpointRadius]}
-      rotation={[0, rotation, 0]}
-    >
-      <mesh receiveShadow>
-        <boxGeometry args={[4.2, 0.16, length]} />
-        <meshStandardMaterial color="#c9c4af" roughness={0.96} />
+    <group>
+      <mesh geometry={shoulder} receiveShadow>
+        <meshStandardMaterial color="#c9c4af" roughness={0.96} side={THREE.DoubleSide} />
       </mesh>
-      <mesh position={[0, 0.085, 0]} receiveShadow>
-        <boxGeometry args={[3.55, 0.035, length - 0.12]} />
-        <meshStandardMaterial color="#e2dccb" roughness={0.94} />
+      <mesh geometry={surface} receiveShadow>
+        <meshStandardMaterial color="#e2dccb" roughness={0.94} side={THREE.DoubleSide} />
       </mesh>
-      {[-1, 1].map((side) => (
-        <mesh key={side} position={[side * 1.97, 0.08, 0]} receiveShadow>
-          <boxGeometry args={[0.16, 0.14, length]} />
-          <meshStandardMaterial color="#aaa58f" roughness={0.88} />
-        </mesh>
-      ))}
-      {Array.from({ length: joints }, (_, index) => {
-        const segmentZ = -length / 2 + (index + 1) * (length / (joints + 1))
-        return (
-          <mesh key={index} position={[0, 0.11, segmentZ]}>
-            <boxGeometry args={[3.48, 0.016, 0.045]} />
-            <meshStandardMaterial color="#b9b09b" roughness={0.9} />
-          </mesh>
-        )
-      })}
     </group>
   )
 }
@@ -403,28 +439,41 @@ function WelcomePlaza() {
 }
 
 export default function Environment({ buildings }: { buildings: CampusBuilding[] }) {
-  const trees = useMemo<InstanceTransform[]>(() => Array.from({ length: 18 }, (_, index) => {
-    const angle = (index / 18) * Math.PI * 2 + Math.PI / 18
-    const radius = index % 2 === 0 ? 48 : 52
-    const x = Math.cos(angle) * radius
-    const z = Math.sin(angle) * radius
-    const size = index % 3 === 0 ? 1.18 : 0.92
-    return {
-      position: [x, getCampusTerrainHeight(x, z, buildings), z],
-      scale: [size, size, size],
-    }
-  }), [buildings])
+  const trees = useMemo<InstanceTransform[]>(() => {
+    const woodland = Array.from({ length: 30 }, (_, index) => {
+      const angle = (index / 30) * Math.PI * 2 + Math.sin(index * 1.7) * 0.07
+      const radius = 65 + Math.sin(index * 2.31) * 5 + Math.cos(index * 0.83) * 2.2
+      return [Math.cos(angle) * radius, Math.sin(angle) * radius] as [number, number]
+    })
+    const groves: [number, number][] = [
+      [-70, -25], [-74, -30], [-67, -35],
+      [70, 31], [75, 38], [65, 36],
+      [-22, 72], [-29, 68], [-15, 76],
+      [20, -73], [28, -68], [14, -77],
+    ]
+
+    return [...woodland, ...groves].map(([x, z], index) => {
+      const size = index % 4 === 0 ? 1.32 : index % 3 === 0 ? 1.12 : 0.92
+      return {
+        position: [x, getCampusTerrainHeight(x, z, buildings), z],
+        scale: [size, size, size],
+      }
+    })
+  }, [buildings])
 
   const pathLandscaping = useMemo(() => buildings.flatMap((building) => {
-    const [x, , z] = building.position
-    const radius = Math.hypot(x, z)
-    const directionX = x / radius
-    const directionZ = z / radius
-    const tangentX = -directionZ
-    const tangentZ = directionX
-    return [15, 25].map((distance) => {
-      const gardenX = directionX * distance + tangentX * 4.1
-      const gardenZ = directionZ * distance + tangentZ * 4.1
+    const path = getCampusPathPoints(building)
+    const buildingIndex = buildings.indexOf(building)
+    return [12, 22].map((pointIndex, index) => {
+      const [x, z] = path[pointIndex]
+      const previous = path[pointIndex - 1]
+      const next = path[pointIndex + 1]
+      const directionX = next[0] - previous[0]
+      const directionZ = next[1] - previous[1]
+      const directionLength = Math.hypot(directionX, directionZ) || 1
+      const side = (buildingIndex + index) % 2 === 0 ? 1 : -1
+      const gardenX = x + (directionZ / directionLength) * 4.1 * side
+      const gardenZ = z - (directionX / directionLength) * 4.1 * side
       return {
         position: [
           gardenX,
@@ -445,14 +494,16 @@ export default function Environment({ buildings }: { buildings: CampusBuilding[]
   }, [pathLandscaping])
 
   const pathLamps = useMemo(() => buildings.map((building) => {
-    const [x, , z] = building.position
-    const radius = Math.hypot(x, z)
-    const directionX = x / radius
-    const directionZ = z / radius
-    const tangentX = -directionZ
-    const tangentZ = directionX
-    const lampX = directionX * 19 + tangentX * 3.2
-    const lampZ = directionZ * 19 + tangentZ * 3.2
+    const path = getCampusPathPoints(building)
+    const [x, z] = path[17]
+    const previous = path[16]
+    const next = path[18]
+    const directionX = next[0] - previous[0]
+    const directionZ = next[1] - previous[1]
+    const directionLength = Math.hypot(directionX, directionZ) || 1
+    const side = buildings.indexOf(building) % 2 === 0 ? 1 : -1
+    const lampX = x + (directionZ / directionLength) * 3.2 * side
+    const lampZ = z - (directionX / directionLength) * 3.2 * side
     return [lampX, getCampusTerrainHeight(lampX, lampZ, buildings), lampZ] as [number, number, number]
   }), [buildings])
 
@@ -460,7 +511,7 @@ export default function Environment({ buildings }: { buildings: CampusBuilding[]
     <group>
       <CampusTerrain buildings={buildings} />
       {buildings.map((building) => (
-        <PathToBuilding key={building.id} building={building} />
+        <PathToBuilding key={building.id} building={building} buildings={buildings} />
       ))}
       <WelcomePlaza />
       <InstancedGardens beds={beds} />

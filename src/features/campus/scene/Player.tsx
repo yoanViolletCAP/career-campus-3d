@@ -53,6 +53,8 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
   const cameraLookTarget = useRef(new THREE.Vector3())
   const cameraFocus = useRef(new THREE.Vector3())
   const cameraInitialized = useRef(false)
+  const movementYaw = useRef(Math.PI)
+  const cameraYaw = useRef(Math.PI)
   const previousPlayerPosition = useRef(position.clone())
   const { camera } = useThree()
   const nearbyId = useRef<string | null>(null)
@@ -99,20 +101,25 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
 
     if (horizontal !== 0 || vertical !== 0) {
       direction.current.set(horizontal, 0, vertical).normalize()
-      const nextX = THREE.MathUtils.clamp(
+      let nextX = THREE.MathUtils.clamp(
         position.x + direction.current.x * PLAYER_SPEED * elapsed,
         -CAMPUS_LIMIT,
         CAMPUS_LIMIT,
       )
-      const nextZ = THREE.MathUtils.clamp(
+      let nextZ = THREE.MathUtils.clamp(
         position.z + direction.current.z * PLAYER_SPEED * elapsed,
         -CAMPUS_LIMIT,
         CAMPUS_LIMIT,
       )
-
+      const nextRadius = Math.hypot(nextX, nextZ)
+      if (nextRadius > CAMPUS_LIMIT) {
+        nextX *= CAMPUS_LIMIT / nextRadius
+        nextZ *= CAMPUS_LIMIT / nextRadius
+      }
       if (!isBuildingCollision(nextX, position.z, buildings)) position.x = nextX
       if (!isBuildingCollision(position.x, nextZ, buildings)) position.z = nextZ
-      group.current?.rotation.set(0, Math.atan2(direction.current.x, direction.current.z), 0)
+      movementYaw.current = Math.atan2(direction.current.x, direction.current.z)
+      group.current?.rotation.set(0, movementYaw.current, 0)
     }
 
     const isMoving = horizontal !== 0 || vertical !== 0
@@ -146,10 +153,26 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
     if (eDown && !eWasDown.current && closest) onInteract(closest)
     eWasDown.current = eDown
 
-    cameraTarget.current.set(position.x, position.y + 12, position.z + 20)
-    cameraLookTarget.current.set(position.x, position.y + 1.6, position.z)
     const teleported = previousPlayerPosition.current.distanceTo(position) > 10
-    const cameraBlend = 1 - Math.exp(-elapsed * 3.5)
+    if (teleported) cameraYaw.current = movementYaw.current
+    const yawDelta = Math.atan2(
+      Math.sin(movementYaw.current - cameraYaw.current),
+      Math.cos(movementYaw.current - cameraYaw.current),
+    )
+    cameraYaw.current += yawDelta * (1 - Math.exp(-elapsed * 2.8))
+    const forwardX = Math.sin(cameraYaw.current)
+    const forwardZ = Math.cos(cameraYaw.current)
+    cameraTarget.current.set(
+      position.x - forwardX * 17.5,
+      position.y + 10.5,
+      position.z - forwardZ * 17.5,
+    )
+    cameraLookTarget.current.set(
+      position.x + forwardX * 5,
+      position.y + 1.5,
+      position.z + forwardZ * 5,
+    )
+    const cameraBlend = 1 - Math.exp(-elapsed * 3.2)
     if (!cameraInitialized.current || teleported) {
       camera.position.copy(cameraTarget.current)
       cameraFocus.current.copy(cameraLookTarget.current)
