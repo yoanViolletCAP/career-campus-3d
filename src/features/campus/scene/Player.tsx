@@ -52,6 +52,7 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
   const cameraTarget = useRef(new THREE.Vector3())
   const cameraLookTarget = useRef(new THREE.Vector3())
   const cameraFocus = useRef(new THREE.Vector3())
+  const cameraInitialized = useRef(false)
   const previousPlayerPosition = useRef(position.clone())
   const { camera } = useThree()
   const nearbyId = useRef<string | null>(null)
@@ -146,12 +147,13 @@ export default function Player({ buildings, position, onNearbyChange, onInteract
     eWasDown.current = eDown
 
     cameraTarget.current.set(position.x, position.y + 12, position.z + 20)
-    cameraLookTarget.current.set(position.x, 1.8, position.z)
+    cameraLookTarget.current.set(position.x, position.y + 1.6, position.z)
     const teleported = previousPlayerPosition.current.distanceTo(position) > 10
-    const cameraBlend = 1 - Math.exp(-elapsed * 1.35)
-    if (teleported) {
+    const cameraBlend = 1 - Math.exp(-elapsed * 3.5)
+    if (!cameraInitialized.current || teleported) {
       camera.position.copy(cameraTarget.current)
       cameraFocus.current.copy(cameraLookTarget.current)
+      cameraInitialized.current = true
     } else {
       camera.position.lerp(cameraTarget.current, cameraBlend)
       cameraFocus.current.lerp(cameraLookTarget.current, cameraBlend)
