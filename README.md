@@ -58,6 +58,8 @@ src/
 
 L'écran de chargement suit les étapes réelles de démarrage (interface, module 3D, renderer, première frame). Son pourcentage représente ces jalons, pas le volume en octets. La scène est actuellement générée en code et n'a pas encore de modèles ou textures distants à charger.
 
-## Périmètre du campus
+## Échelle et scène du campus
 
-Pour avancer sur les contenus et l’expérience du portfolio, la première carte est un jalon temporairement stable : les six destinations et leur disposition ne sont pas modifiées dans les prochaines itérations. Cela ne valide pas définitivement son échelle. La taille du monde, ses marges et le cadrage de caméra devront être réévalués ensemble dans une passe dédiée, avant d’ajouter davantage de détails.
+Le campus conserve ses six destinations en éventail autour de la place. Les bâtiments sont maintenant répartis jusqu'à environ 36 unités du centre, avec une limite de déplacement de 55 unités. Le terrain, les chemins, les plantations et le brouillard sont dimensionnés pour ce monde élargi. Les proportions restent configurables dans `features/campus/data/campus.ts` et `features/campus/scene/` ; après tout changement d'échelle, vérifier ensemble les entrées, collisions, chemins et cadrage.
+
+La scène utilise des géométries Three.js légères, sans textures ou modèles distants. Les façades partagent des matériaux et une structure cohérente, avec trois variations architecturales, des vitrages, des auvents, des panneaux de toit et des plantations d'entrée. Le centre dispose d'une fontaine, de bancs, de massifs et d'un éclairage de chemin.

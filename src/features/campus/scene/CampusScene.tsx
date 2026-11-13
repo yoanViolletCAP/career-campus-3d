@@ -30,24 +30,24 @@ function FirstFrame({ onReady }: { onReady: () => void }) {
 
 function NavigationBoard({ buildings, onNavigate }: Pick<CampusSceneProps, 'buildings' | 'onNavigate'>) {
   return (
-    <group>
-      <mesh position={[0, 1.3, -2.6]} castShadow>
-        <boxGeometry args={[3.2, 2.6, 0.2]} />
+    <group position={[2.2, 0, -5.3]} rotation={[0, -Math.PI / 8, 0]}>
+      <mesh position={[0, 1.8, 0]} castShadow>
+        <boxGeometry args={[4.7, 3.6, 0.28]} />
         <meshStandardMaterial color="#19364a" roughness={0.55} />
       </mesh>
-      <mesh position={[0, 2.58, -2.48]}>
-        <boxGeometry args={[2.92, 0.08, 0.025]} />
+      <mesh position={[0, 3.55, 0.18]}>
+        <boxGeometry args={[4.35, 0.1, 0.035]} />
         <meshStandardMaterial color="#67d1db" emissive="#43aeb9" emissiveIntensity={0.4} />
       </mesh>
-      <mesh position={[-0.9, 0.08, -2.6]} castShadow>
-        <cylinderGeometry args={[0.08, 0.12, 1.9, 8]} />
+      <mesh position={[-1.45, 0.08, -0.02]} castShadow>
+        <cylinderGeometry args={[0.1, 0.15, 2.9, 8]} />
         <meshStandardMaterial color="#314d5c" roughness={0.68} />
       </mesh>
-      <mesh position={[0.9, 0.08, -2.6]} castShadow>
-        <cylinderGeometry args={[0.08, 0.12, 1.9, 8]} />
+      <mesh position={[1.45, 0.08, -0.02]} castShadow>
+        <cylinderGeometry args={[0.1, 0.15, 2.9, 8]} />
         <meshStandardMaterial color="#314d5c" roughness={0.68} />
       </mesh>
-      <Html position={[0, 1.42, -2.48]} center>
+      <Html position={[0, 1.82, 0.19]} center>
         <div className="world-board" onPointerDown={(event) => event.stopPropagation()}>
           <span className="world-board__eyebrow">CAREERVERSE · CAMPUS</span>
           <strong>Choisir une destination</strong>
@@ -77,22 +77,22 @@ export default function CampusScene({
   return (
     <>
       <color attach="background" args={['#b9d1d8']} />
-      <fog attach="fog" args={['#b9d1d8', 34, 72]} />
-      <ambientLight intensity={1.25} color="#e6f1f1" />
+      <fog attach="fog" args={['#b9d1d8', 78, 148]} />
+      <ambientLight intensity={1.2} color="#e6f1f1" />
       <directionalLight
-        position={[-14, 24, 12]}
-        intensity={1.9}
+        position={[-24, 34, 20]}
+        intensity={2}
         color="#fff5e7"
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-25}
-        shadow-camera-right={25}
-        shadow-camera-top={25}
-        shadow-camera-bottom={-25}
+        shadow-camera-left={-64}
+        shadow-camera-right={64}
+        shadow-camera-top={64}
+        shadow-camera-bottom={-64}
         shadow-bias={-0.00015}
       />
-      <hemisphereLight args={['#d7efff', '#526d5b', 0.55]} />
+      <hemisphereLight args={['#d7efff', '#526d5b', 0.65]} />
       <Environment buildings={buildings} />
       <Buildings buildings={buildings} />
       <NavigationBoard buildings={buildings} onNavigate={onNavigate} />

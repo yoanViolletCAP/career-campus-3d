@@ -224,8 +224,8 @@ kbd {
 }
 
 .world-board {
-  width: 290px;
-  padding: 14px;
+  width: 250px;
+  padding: 12px;
   border: 1px solid rgb(129 188 197 / 52%);
   border-radius: 7px;
   background: #102b3e;
@@ -245,9 +245,9 @@ kbd {
 
 .world-board > strong {
   display: block;
-  margin-bottom: 9px;
+  margin-bottom: 7px;
   font-family: Manrope, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .world-board__destinations {
@@ -260,14 +260,14 @@ kbd {
   grid-template-columns: 24px 1fr 14px;
   align-items: center;
   gap: 6px;
-  min-height: 29px;
-  padding: 4px 5px;
+  min-height: 25px;
+  padding: 3px 5px;
   border: 0;
   border-radius: 4px;
   background: transparent;
   color: #e3edf0;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   text-align: left;
 }
 
@@ -760,13 +760,13 @@ kbd {
   }
 
   .world-board {
-    width: 270px;
+    width: 235px;
     padding: 12px;
   }
 
   .world-board__destinations button {
-    min-height: 27px;
-    font-size: 11px;
+    min-height: 24px;
+    font-size: 10px;
   }
 
   .loading-screen {

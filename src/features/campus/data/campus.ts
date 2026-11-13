@@ -14,6 +14,7 @@ export type CampusBuilding = {
   color: string
   accent: string
   size: [number, number, number]
+  facadeStyle: 'atrium' | 'grid' | 'terrace'
 }
 
 export type CampusNavigationRequest = {
@@ -26,59 +27,65 @@ export const campusBuildings: CampusBuilding[] = [
     id: 'profile',
     name: 'Profil',
     shortName: '01 · PROFIL',
-    position: [-9, 0, -9],
+    position: [-26, 0, -26],
     color: '#dce7ed',
     accent: '#48c8da',
-    size: [6.2, 4.8, 6],
+    size: [10.5, 6.2, 9.5],
+    facadeStyle: 'atrium',
   },
   {
     id: 'project-one',
     name: 'Projet majeur 1',
     shortName: '02 · PROJET 01',
-    position: [0, 0, -13],
+    position: [0, 0, -36],
     color: '#e5e9ec',
     accent: '#84a9c1',
-    size: [7.1, 5.2, 5.8],
+    size: [12, 6.8, 9],
+    facadeStyle: 'grid',
   },
   {
     id: 'project-two',
     name: 'Projet majeur 2',
     shortName: '03 · PROJET 02',
-    position: [9, 0, -9],
+    position: [26, 0, -26],
     color: '#dce7ed',
     accent: '#59b8c5',
-    size: [6.2, 4.8, 6],
+    size: [10.5, 6.2, 9.5],
+    facadeStyle: 'terrace',
   },
   {
     id: 'project-three',
     name: 'Projet majeur 3',
     shortName: '04 · PROJET 03',
-    position: [9, 0, 9],
+    position: [26, 0, 26],
     color: '#e5e9ec',
     accent: '#7fa0bd',
-    size: [6.7, 5, 6],
+    size: [11, 6.5, 9.5],
+    facadeStyle: 'grid',
   },
   {
     id: 'missions',
     name: 'Autres missions',
     shortName: '05 · MISSIONS',
-    position: [0, 0, 13],
+    position: [0, 0, 36],
     color: '#dce7ed',
     accent: '#54becb',
-    size: [7.1, 4.8, 5.8],
+    size: [12, 6.2, 9],
+    facadeStyle: 'terrace',
   },
   {
     id: 'veolia',
     name: 'Veolia',
     shortName: '06 · VEOLIA',
-    position: [-9, 0, 9],
+    position: [-26, 0, 26],
     color: '#e5e9ec',
     accent: '#52b9bb',
-    size: [6.2, 5, 6],
+    size: [10.5, 6.5, 9.5],
+    facadeStyle: 'atrium',
   },
 ]
 
-export const CAMPUS_LIMIT = 22
+export const CAMPUS_LIMIT = 55
 export const PLAYER_SPEED = 6
 export const INTERACTION_DISTANCE = 3.2
 
